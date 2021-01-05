@@ -8,7 +8,6 @@
 
 from selenium import webdriver
 import getpass
-import re
 
 
 # get inputs (url, number of browsers) from user
@@ -22,8 +21,8 @@ def get_input():
     while True:
         try:
             global number
-            number = int(input("how many browsers would you like to open (MAX : 20): "))
-            if number <= 0 or number > 20:
+            number = int(input("how many browsers would you like to open: "))
+            if number <= 0:
                 print("come on man, you are better than this - -")
                 continue
             break
@@ -43,7 +42,7 @@ def read_proxy():
 # open certain number of chrome (different proxy)
 def open_chrome(num):
     for i in range(0, num):
-        current_profile = i+1
+        current_profile = i + 1
         PROXY = str(proxy_list[i])
         # setting the options (profile for chrome)
         options = webdriver.ChromeOptions()
@@ -62,13 +61,32 @@ def open_chrome(num):
         driver.get(url)
 
 
+# use the function below to test
+
+def open_the_one_you_like(the_one):
+    options = webdriver.ChromeOptions()
+    options.add_argument(
+        r'--user-data-dir=C:\Users\{}\Documents\Chrome_Profiles\Chrome_profile_{}\profile_{}'.format(
+            getpass.getuser(), str(the_one + 1), str(the_one + 1)))
+    options.add_argument('--profile-directory=Profile {}'.format(the_one + 1))
+    options.add_argument('--proxy-server=%s' % proxy_list[the_one])
+    # keep browser open
+    options.add_experimental_option("detach", True)
+
+    # add options to driver
+    driver = webdriver.Chrome(options=options)
+
+    # open snkr account
+    driver.get(url)
+
+
 # main function
 if __name__ == '__main__':
     # initialization
-    number = 0
     url = ''
+    number = 0
     proxy_list = list()
 
-    read_proxy()
     get_input()
+    read_proxy()
     open_chrome(number)
